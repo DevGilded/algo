@@ -28,19 +28,18 @@ class Rand_Depth_first_search:
         # while (len(self.visited) != len(self.cell)):
         direction = ['north', 'east', 'south', 'west']
         
-        current_cell = self.stack[len(self.stack)-1]
+        current_cell = self.stack[-1]
         neighbor = self.cell_neighbor(current_cell)
 
         side = direction[random.randint(0, 3)]
         goto = neighbor[side]
 
-
-        if neighbor[direction[0]] == None and neighbor[direction[1]] == None and neighbor[direction[2]] == None and neighbor[direction[3]] == None:
+        if all(value is None for value in neighbor.values()):
             self.stack.pop()
             return
             # continue
 
-        if goto == None:
+        if goto is None:
             # continue
             return
 
@@ -158,14 +157,12 @@ def generateNew():
 def nextPath():
     global img, display, maze
 
-    if 'display' in globals():
-        display.destroy()
-
     maze.startAlgo()
     img = ImageTk.PhotoImage(maze._maze.resize((width, height), Image.NEAREST))
     
-    display = tk.Label(frame, image=img)
-    display.pack(expand=True, fill='both')
+    display.config(image=img)
+    display.image = img  # Keep a reference to avoid garbage collection
+
     if len(maze.visited) != len(maze.cell):
         # print('--[ Running ]--')
         window.after(1, nextPath)
